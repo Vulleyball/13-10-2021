@@ -1,0 +1,397 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "url": "https://raw.githubusercontent.com/Vulleyball/Vulleyball_3179/main/cancer_new2.csv"
+    },
+    "vconcat": [{
+            "width": 470,
+            "height": 250,
+            "title": "Breast cancer deaths over the years",
+            "projection": {
+                "type": "equirectangular"
+            },
+            "layer": [{
+                    "data": {
+                        "url": "https://raw.githubusercontent.com/KaneSec/vega_lite/main/2_symbol_map/js/ne_110m_admin_0_countries.topojson",
+
+                        "format": {
+                            "type": "topojson",
+                            "feature": "ne_110m_admin_0_countries"
+                        }
+                    },
+                    "mark": {
+                        "type": "geoshape",
+                        "fill": "lightgray",
+                        "stroke": "white"
+                    }
+                },
+                {
+                    "transform": [
+                        {"filter": {
+                            "param": "time_brush"
+                        }}
+                    ],
+                    "encoding": {
+                        "longitude": {
+                            "field": "Longitude",
+                            "type": "quantitative"
+                        },
+                        "latitude": {
+                            "field": "Latitude",
+                            "type": "quantitative"
+                        },
+                        "color": {
+                            "field": "Breast",
+                            "type": "quantitative",
+                            "scale": {
+                                "type": "threshold",
+                                "domain": [1000, 2000, 3000, 4000],
+                                "range": ["#fdbe85", "#fd8d3c", "#e6550d", "#bd0026", "#7f0000"]
+                            }
+                        },
+                        "tooltip": [{
+                                "field": "Breast",
+                                "type": "quantitative"
+                            },
+                            {
+                                "field": "Country",
+                                "type": "nominal"
+                            }
+                        ]
+                    },
+                    "layer": [{
+                            "mark": {
+                                "type": "point",
+                                "opacity": 0.4,
+                                "size": 15
+                            }
+                        },
+                        {
+                            "transform": [
+                                {
+                                    "window": [{
+                                        "op": "rank",
+                                        "as": "ranking"
+                                    }],
+                                    "sort": [{
+                                        "field": "Breast",
+                                        "order": "descending"
+                                    }]
+                                },
+                                {
+                                    "filter": "datum.ranking == 1"
+                                },
+                                {
+                                    "calculate": "'most deaths: ' + datum['Country']",
+                                    "as": "text_annotation"
+                                }
+                            ],
+                            "mark": {
+                                "type": "text",
+                                "align": "left",
+                                "dx": 4
+                            },
+                            "encoding": {
+                                "color": {
+
+                                },
+                                "text": {
+                                    "field": "text_annotation"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "hconcat": [{
+                    "width": 190,
+                    "height": 150,
+
+                    "title": {
+                        "text": "Kidney cancer cases per 100K people"
+                    },
+                    "layer": [{
+                            "mark": "line",
+                            "params": [{
+                                "name": "time_brush",
+                                "select": {
+                                    "type": "interval",
+                                    "encodings": ["x"]
+
+                                }
+                            }],
+                            "transform": [{
+                                "calculate": "datum.Cancer/datum.Population",
+                                "as": "mean_cancer"
+                            }],
+                            "encoding": {
+                                "x": {
+                                    "field": "Year",
+                                    "timeUnit": "year",
+                                    "axis": {
+                                        "title": "Use this line chart to filter",
+                                        "format": "%Y"
+                                    }
+                                    
+                                },
+                                "y": {
+                                    "field": "Cancer",
+                                    "aggregate": "mean",
+                                    "axis": {
+                                        "tickCount": 3
+                                    },
+                                    "title": null,
+                                    "scale": {
+                                        "type": "log"
+                                    }
+                                },
+                                "tooltip": [
+                                    {"field": "Continent"},
+                                    {"field": "Year", "timeUnit": "year","format": "%Y",
+                                    "title": "Year"},
+                                    {"field": "Cancer", "aggregate": "mean", "format": ".2f",
+                                    "title": "Average incidence"}
+                                ],
+                                "color": {
+                                    "field": "Continent",
+                                    "type": "nominal",
+                                    "title": null,
+                                    "scale": {
+                                        "domain": [
+                                            "Africa",
+                                            "Asia",
+                                            "Europe",
+                                            "North America",
+                                            "Oceania",
+                                            "South America"
+                                        ],
+                                        "range": [
+                                            "#6a3d9a",
+                                            "#127273",
+                                            "#1f77b4",
+                                            "#bf130d",
+                                            "#c49c94",
+                                            "#fca636"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "transform": [{
+                                    "window": [{
+                                        "op": "rank",
+                                        "as": "ranking"
+                                    }],
+                                    "sort": [{
+                                        "field": "Breast",
+                                        "order": "descending"
+                                    }]
+                                },
+                                {
+                                    "filter": "datum.ranking == 1"
+                                },
+                                {
+                                    "calculate": "'*Technology helps'",
+                                    "as": "text_annotation2"
+                                }
+                            ],
+                            "mark": {
+                                "point": "transparent",
+                                "type": "text",
+                                "align": "left",
+                                "dx": 14,
+                                "dy": 30,
+                                "fontSize": 9,
+                                "fontStyle": "italic",
+                                "color": "teal"
+                            },
+                            "encoding": {
+                                "text": {
+                                    "field": "text_annotation2"
+                                }
+                            }
+                        },
+                        {
+                            "transform": [{
+                                    "window": [{
+                                        "op": "rank",
+                                        "as": "ranking"
+                                    }],
+                                    "sort": [{
+                                        "field": "Breast",
+                                        "order": "descending"
+                                    }]
+                                },
+                                {
+                                    "filter": "datum.ranking == 1"
+                                },
+                                {
+                                    "calculate": "' detecting more cases'",
+                                    "as": "text_annotation3"
+                                }
+                            ],
+                            "mark": {
+                                "point": "transparent",
+                                "type": "text",
+                                "align": "left",
+                                "dx": 6,
+                                "dy": 60,
+                                "fontSize": 9,
+                                "fontStyle": "italic",
+                                "color": "teal"
+                            },
+                            "encoding": {
+                                "text": {
+                                    "field": "text_annotation3"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "width": 185,
+                    "height": 150,
+                    "title": "Lung cancer incidence rate",
+                    "layer": [{
+                        "mark": "bar",
+                        "transform": [
+                            {"calculate": "datum.Lung/10000000","as": "Lung"},
+                            {
+                            "filter": {
+                                "param": "time_brush"
+                            }
+                        }],
+                        "encoding": {
+                            "y": {
+                                "type": "nominal",
+                                "field": "Continent",
+                                "title": null
+                            },
+                            "x": {
+                                "field": "Lung",
+                                "type": "quantitative",
+                                "aggregate": "mean",
+                                "title":null
+                            },
+                            "tooltip": [
+                                {"field": "Continent"},
+                                {"field": "Lung", "title": "Average incidence"}
+                            ],
+                            "color": {
+                                "field": "Continent",
+                                "type": "nominal",
+                                "title": null,
+                                "scale": {
+                                    "domain": [
+                                        "Africa",
+                                        "Asia",
+                                        "Europe",
+                                        "North America",
+                                        "Oceania",
+                                        "South America"
+                                    ],
+                                    "range": [
+                                        "#6a3d9a",
+                                        "#127273",
+                                        "#1f77b4",
+                                        "#bf130d",
+                                        "#c49c94",
+                                        "#fca636"
+                                    ]
+                                }
+                            }
+                        }
+                    }, {
+                        "transform": [{
+                                "window": [{
+                                    "op": "rank",
+                                    "as": "ranking"
+                                }],
+                                "sort": [{
+                                    "field": "Breast",
+                                    "order": "descending"
+                                }]
+                            },
+                            {
+                                "filter": "datum.ranking == 1"
+                            },
+                            {
+                                "calculate": "'*The incidence rate of getting'",
+                                "as": "text_annotation2"
+                            }
+                        ],
+                        "mark": {
+                            "point": "transparent",
+                            "type": "text",
+                            "align": "left",
+                            "dx": -40,
+                            "dy": 39,
+                            "fontSize": 9,
+                            "fontStyle": "italic",
+                            "color": "teal"
+                        },
+                        "encoding": {
+                            "text": {
+                                "field": "text_annotation2"
+                            }
+                        }
+                    },{
+                        "transform": [{
+                                "window": [{
+                                    "op": "rank",
+                                    "as": "ranking"
+                                }],
+                                "sort": [{
+                                    "field": "Breast",
+                                    "order": "descending"
+                                }]
+                            },
+                            {
+                                "filter": "datum.ranking == 1"
+                            },
+                            {
+                                "calculate": "'cancer is much lower in Oceania'",
+                                "as": "text_annotation3"
+                            }
+                        ],
+                        "mark": {
+                            "point": "transparent",
+                            "type": "text",
+                            "align": "left",
+                            "dx": -40,
+                            "dy": 59,
+                            "fontSize": 9,
+                            "fontStyle": "italic",
+                            "color": "teal"
+                        },
+                        "encoding": {
+                            "text": {
+                                "field": "text_annotation3"
+                            }
+                        }
+                    }]
+                }
+            ]
+        }
+    ],
+    "config": {
+        "title": {
+            "font": "sans-serif",
+            "fontSize": 11,
+            "offset": 15
+        },
+        "legend": {
+
+            "title": null,
+            "orient": "top",
+            "layout": {
+                "top": {
+                    "anchor": "middle"
+                }
+            }
+        }
+    }
+}
