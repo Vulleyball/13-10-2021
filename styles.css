@@ -32,13 +32,10 @@
 .page {
 	color: #212121;
     width: 1230px;
-	height: 2950px;
+	height: 2850px;
 	font-family: Lato;
 	font-weight: 300;
     background-color: white;
-    margin: auto;
-    padding: 50px;
-    padding-top: 35px;
 	font-size: 18px;
 }
 
